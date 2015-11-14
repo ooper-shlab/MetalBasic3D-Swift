@@ -1,0 +1,558 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3A21792F1BCC63F90073FB40 /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 623F27DB19340FA2000FA88C /* shaders.metal */; };
+		3A2179351BCC65370073FB40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A2179331BCC65370073FB40 /* Main.storyboard */; };
+		3A2179371BCC653D0073FB40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A2179361BCC653D0073FB40 /* Assets.xcassets */; };
+		3A5913451BCC47C000890143 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A5913441BCC47C000890143 /* Main.storyboard */; };
+		3A5913491BCC47E200890143 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A5913461BCC47E200890143 /* Images.xcassets */; };
+		3A59134A1BCC47E200890143 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3A5913471BCC47E200890143 /* LaunchScreen.xib */; };
+		623F27DC19340FA2000FA88C /* shaders.metal in Resources */ = {isa = PBXBuildFile; fileRef = 623F27DB19340FA2000FA88C /* shaders.metal */; };
+		626C61091932F259007A3E00 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 626C61081932F259007A3E00 /* Metal.framework */; };
+		626C610B1932F25E007A3E00 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 626C610A1932F25E007A3E00 /* QuartzCore.framework */; };
+		D7BF7C521BF6D7A800414589 /* AAPLTransforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C511BF6D7A800414589 /* AAPLTransforms.swift */; };
+		D7BF7C531BF6D7AC00414589 /* AAPLTransforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C511BF6D7A800414589 /* AAPLTransforms.swift */; };
+		D7BF7C551BF6EA9C00414589 /* AAPL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C541BF6EA9C00414589 /* AAPL.swift */; };
+		D7BF7C561BF6EACF00414589 /* AAPL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C541BF6EA9C00414589 /* AAPL.swift */; };
+		D7BF7C581BF6EB0B00414589 /* AAPLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C571BF6EB0B00414589 /* AAPLView.swift */; };
+		D7BF7C591BF6EBAC00414589 /* AAPLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C571BF6EB0B00414589 /* AAPLView.swift */; };
+		D7BF7C5D1BF73BD700414589 /* AAPLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C5C1BF73BD700414589 /* AAPLViewController.swift */; };
+		D7BF7C5F1BF73DAA00414589 /* AAPLRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C5E1BF73DAA00414589 /* AAPLRenderer.swift */; };
+		D7BF7C601BF73DAA00414589 /* AAPLRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C5E1BF73DAA00414589 /* AAPLRenderer.swift */; };
+		D7BF7C611BF73E7000414589 /* AAPLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C5C1BF73BD700414589 /* AAPLViewController.swift */; };
+		D7BF7C631BF741E300414589 /* AAPLSharedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C621BF741E300414589 /* AAPLSharedTypes.swift */; };
+		D7BF7C641BF741E300414589 /* AAPLSharedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C621BF741E300414589 /* AAPLSharedTypes.swift */; };
+		D7BF7C681BF756D500414589 /* AAPLAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C671BF756D500414589 /* AAPLAppDelegate.swift */; };
+		D7BF7C6B1BF7604200414589 /* AAPLAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF7C691BF7603D00414589 /* AAPLAppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3A2179321BCC65310073FB40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = OSX/Info.plist; sourceTree = "<group>"; };
+		3A2179341BCC65370073FB40 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = OSX/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3A2179361BCC653D0073FB40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = OSX/Assets.xcassets; sourceTree = "<group>"; };
+		3A5913251BCC43E900890143 /* MetalBasic3D.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalBasic3D.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A5913441BCC47C000890143 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = iOS/Main.storyboard; sourceTree = "<group>"; };
+		3A5913461BCC47E200890143 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = iOS/Images.xcassets; sourceTree = "<group>"; };
+		3A5913471BCC47E200890143 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LaunchScreen.xib; path = iOS/LaunchScreen.xib; sourceTree = "<group>"; };
+		3A59134C1BCC47ED00890143 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = iOS/Info.plist; sourceTree = "<group>"; };
+		3A77F5D91BED77A500F559E4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		623F27DB19340FA2000FA88C /* shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
+		626C60B31932F12C007A3E00 /* MetalBasic3D.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalBasic3D.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		626C61081932F259007A3E00 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		626C610A1932F25E007A3E00 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D7BF7C511BF6D7A800414589 /* AAPLTransforms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLTransforms.swift; sourceTree = "<group>"; };
+		D7BF7C541BF6EA9C00414589 /* AAPL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPL.swift; sourceTree = "<group>"; };
+		D7BF7C571BF6EB0B00414589 /* AAPLView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLView.swift; sourceTree = "<group>"; };
+		D7BF7C5C1BF73BD700414589 /* AAPLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLViewController.swift; sourceTree = "<group>"; };
+		D7BF7C5E1BF73DAA00414589 /* AAPLRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLRenderer.swift; sourceTree = "<group>"; };
+		D7BF7C621BF741E300414589 /* AAPLSharedTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLSharedTypes.swift; sourceTree = "<group>"; };
+		D7BF7C671BF756D500414589 /* AAPLAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AAPLAppDelegate.swift; path = iOS/AAPLAppDelegate.swift; sourceTree = "<group>"; };
+		D7BF7C691BF7603D00414589 /* AAPLAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AAPLAppDelegate.swift; path = OSX/AAPLAppDelegate.swift; sourceTree = "<group>"; };
+		D7BF7C6C1BF76D6900414589 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		D7BF7C6E1BF76D8100414589 /* README2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README2.md; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3A5913221BCC43E900890143 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		626C60AF1932F12C007A3E00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				626C610B1932F25E007A3E00 /* QuartzCore.framework in Frameworks */,
+				626C61091932F259007A3E00 /* Metal.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3A5913391BCC46D200890143 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				3A5913441BCC47C000890143 /* Main.storyboard */,
+				D7BF7C671BF756D500414589 /* AAPLAppDelegate.swift */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		3A59133E1BCC475A00890143 /* OSX */ = {
+			isa = PBXGroup;
+			children = (
+				D7BF7C691BF7603D00414589 /* AAPLAppDelegate.swift */,
+			);
+			name = OSX;
+			sourceTree = "<group>";
+		};
+		3A5913421BCC477700890143 /* OSX */ = {
+			isa = PBXGroup;
+			children = (
+				3A2179361BCC653D0073FB40 /* Assets.xcassets */,
+				3A2179321BCC65310073FB40 /* Info.plist */,
+				3A2179331BCC65370073FB40 /* Main.storyboard */,
+			);
+			name = OSX;
+			sourceTree = "<group>";
+		};
+		3A5913431BCC477D00890143 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				3A59134C1BCC47ED00890143 /* Info.plist */,
+				3A5913461BCC47E200890143 /* Images.xcassets */,
+				3A5913471BCC47E200890143 /* LaunchScreen.xib */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		622A9BA319A983FC007F8120 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				629ADF531933EBBC00DEFFB1 /* App */,
+				629ADF551933EBD800DEFFB1 /* Math */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		626C60A91932F12C007A3E00 = {
+			isa = PBXGroup;
+			children = (
+				D7BF7C6C1BF76D6900414589 /* LICENSE.txt */,
+				D7BF7C6E1BF76D8100414589 /* README2.md */,
+				626C60B51932F12C007A3E00 /* MetalBasic3D */,
+				626C60B41932F12C007A3E00 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		626C60B41932F12C007A3E00 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				626C60B31932F12C007A3E00 /* MetalBasic3D.app */,
+				3A5913251BCC43E900890143 /* MetalBasic3D.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		626C60B51932F12C007A3E00 /* MetalBasic3D */ = {
+			isa = PBXGroup;
+			children = (
+				3A77F5D91BED77A500F559E4 /* README.md */,
+				629ADF541933EBD100DEFFB1 /* Renderer */,
+				622A9BA319A983FC007F8120 /* Common */,
+				626C60B61932F12C007A3E00 /* Supporting Files */,
+				626C610C1932F266007A3E00 /* Frameworks */,
+			);
+			path = MetalBasic3D;
+			sourceTree = "<group>";
+		};
+		626C60B61932F12C007A3E00 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3A5913431BCC477D00890143 /* iOS */,
+				3A5913421BCC477700890143 /* OSX */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		626C610C1932F266007A3E00 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				626C610A1932F25E007A3E00 /* QuartzCore.framework */,
+				626C61081932F259007A3E00 /* Metal.framework */,
+			);
+			name = Frameworks;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		629ADF531933EBBC00DEFFB1 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3A59133E1BCC475A00890143 /* OSX */,
+				3A5913391BCC46D200890143 /* iOS */,
+				D7BF7C571BF6EB0B00414589 /* AAPLView.swift */,
+				D7BF7C5C1BF73BD700414589 /* AAPLViewController.swift */,
+				D7BF7C541BF6EA9C00414589 /* AAPL.swift */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		629ADF541933EBD100DEFFB1 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				D7BF7C5E1BF73DAA00414589 /* AAPLRenderer.swift */,
+				D7BF7C621BF741E300414589 /* AAPLSharedTypes.swift */,
+				623F27DB19340FA2000FA88C /* shaders.metal */,
+			);
+			name = Renderer;
+			sourceTree = "<group>";
+		};
+		629ADF551933EBD800DEFFB1 /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				D7BF7C511BF6D7A800414589 /* AAPLTransforms.swift */,
+			);
+			name = Math;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		626C60B01932F12C007A3E00 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		3A5913241BCC43E900890143 /* MetalBasic3D-OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A5913361BCC43E900890143 /* Build configuration list for PBXNativeTarget "MetalBasic3D-OSX" */;
+			buildPhases = (
+				3A5913211BCC43E900890143 /* Sources */,
+				3A5913221BCC43E900890143 /* Frameworks */,
+				3A5913231BCC43E900890143 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MetalBasic3D-OSX";
+			productName = "MetalBasic3D-OSX";
+			productReference = 3A5913251BCC43E900890143 /* MetalBasic3D.app */;
+			productType = "com.apple.product-type.application";
+		};
+		626C60B21932F12C007A3E00 /* MetalBasic3D-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 626C60D81932F12C007A3E00 /* Build configuration list for PBXNativeTarget "MetalBasic3D-iOS" */;
+			buildPhases = (
+				626C60AE1932F12C007A3E00 /* Sources */,
+				626C60AF1932F12C007A3E00 /* Frameworks */,
+				626C60B01932F12C007A3E00 /* Headers */,
+				626C60B11932F12C007A3E00 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MetalBasic3D-iOS";
+			productName = MetalBasic3D;
+			productReference = 626C60B31932F12C007A3E00 /* MetalBasic3D.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		626C60AA1932F12C007A3E00 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = "Apple Inc";
+				TargetAttributes = {
+					3A5913241BCC43E900890143 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
+			};
+			buildConfigurationList = 626C60AD1932F12C007A3E00 /* Build configuration list for PBXProject "MetalBasic3D" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 626C60A91932F12C007A3E00;
+			productRefGroup = 626C60B41932F12C007A3E00 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3A5913241BCC43E900890143 /* MetalBasic3D-OSX */,
+				626C60B21932F12C007A3E00 /* MetalBasic3D-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3A5913231BCC43E900890143 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A2179371BCC653D0073FB40 /* Assets.xcassets in Resources */,
+				3A2179351BCC65370073FB40 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		626C60B11932F12C007A3E00 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A5913491BCC47E200890143 /* Images.xcassets in Resources */,
+				3A5913451BCC47C000890143 /* Main.storyboard in Resources */,
+				623F27DC19340FA2000FA88C /* shaders.metal in Resources */,
+				3A59134A1BCC47E200890143 /* LaunchScreen.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3A5913211BCC43E900890143 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A21792F1BCC63F90073FB40 /* shaders.metal in Sources */,
+				D7BF7C5F1BF73DAA00414589 /* AAPLRenderer.swift in Sources */,
+				D7BF7C6B1BF7604200414589 /* AAPLAppDelegate.swift in Sources */,
+				D7BF7C521BF6D7A800414589 /* AAPLTransforms.swift in Sources */,
+				D7BF7C5D1BF73BD700414589 /* AAPLViewController.swift in Sources */,
+				D7BF7C631BF741E300414589 /* AAPLSharedTypes.swift in Sources */,
+				D7BF7C581BF6EB0B00414589 /* AAPLView.swift in Sources */,
+				D7BF7C551BF6EA9C00414589 /* AAPL.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		626C60AE1932F12C007A3E00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7BF7C641BF741E300414589 /* AAPLSharedTypes.swift in Sources */,
+				D7BF7C531BF6D7AC00414589 /* AAPLTransforms.swift in Sources */,
+				D7BF7C681BF756D500414589 /* AAPLAppDelegate.swift in Sources */,
+				D7BF7C561BF6EACF00414589 /* AAPL.swift in Sources */,
+				D7BF7C611BF73E7000414589 /* AAPLViewController.swift in Sources */,
+				D7BF7C601BF73DAA00414589 /* AAPLRenderer.swift in Sources */,
+				D7BF7C591BF6EBAC00414589 /* AAPLView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		3A2179331BCC65370073FB40 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3A2179341BCC65370073FB40 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3A5913371BCC43E900890143 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TARGET_OSX,
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "MetalBasic3D/OSX//Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.apple-samplecode.MetalBasic3D";
+				PRODUCT_NAME = MetalBasic3D;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3A5913381BCC43E900890143 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = TARGET_OSX;
+				INFOPLIST_FILE = "MetalBasic3D/OSX//Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.apple-samplecode.MetalBasic3D";
+				PRODUCT_NAME = MetalBasic3D;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		626C60D61932F12C007A3E00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TOOLCHAINS = Default;
+			};
+			name = Debug;
+		};
+		626C60D71932F12C007A3E00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TOOLCHAINS = Default;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		626C60D91932F12C007A3E00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_MODULES_AUTOLINK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TARGET_IOS,
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = MetalBasic3D/iOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.apple-samplecode.$(PRODUCT_NAME)";
+				PRODUCT_NAME = MetalBasic3D;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		626C60DA1932F12C007A3E00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_MODULES_AUTOLINK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = MetalBasic3D/iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.apple-samplecode.$(PRODUCT_NAME)";
+				PRODUCT_NAME = MetalBasic3D;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3A5913361BCC43E900890143 /* Build configuration list for PBXNativeTarget "MetalBasic3D-OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A5913371BCC43E900890143 /* Debug */,
+				3A5913381BCC43E900890143 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		626C60AD1932F12C007A3E00 /* Build configuration list for PBXProject "MetalBasic3D" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				626C60D61932F12C007A3E00 /* Debug */,
+				626C60D71932F12C007A3E00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		626C60D81932F12C007A3E00 /* Build configuration list for PBXNativeTarget "MetalBasic3D-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				626C60D91932F12C007A3E00 /* Debug */,
+				626C60DA1932F12C007A3E00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 626C60AA1932F12C007A3E00 /* Project object */;
+}
