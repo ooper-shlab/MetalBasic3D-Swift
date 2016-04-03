@@ -21,6 +21,20 @@
     typealias BaseViewController = NSViewController
 #endif
 import QuartzCore
+#if os(OSX)
+    // This is the renderer output callback function
+    private func dispatchGameLoop(displayLink: CVDisplayLink,
+        now: UnsafePointer<CVTimeStamp>,
+        outputTime: UnsafePointer<CVTimeStamp>,
+        flagsIn: CVOptionFlags,
+        flagsOut: UnsafeMutablePointer<CVOptionFlags>,
+        displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn
+    {
+        let source = unsafeBitCast(displayLinkContext, dispatch_source_t.self)
+        dispatch_source_merge_data(source, 1)
+        return kCVReturnSuccess
+    }
+#endif
 
 // required view controller delegate functions.
 @objc(AAPLViewControllerDelegate)
@@ -86,25 +100,25 @@ class AAPLViewController: BaseViewController {
     private func dispatchGameLoop() {
         // create a game loop timer using a display link
         _displayLink = UIScreen.mainScreen().displayLinkWithTarget(self,
-            selector: "gameloop")
+            selector: #selector(AAPLViewController.gameloop))
         _displayLink?.frameInterval = interval
         _displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(),
             forMode: NSDefaultRunLoopMode)
     }
     
     #else
-    // This is the renderer output callback function
-    private let dispatchGameLoop: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink,
-        now: UnsafePointer<CVTimeStamp>,
-        outputTime: UnsafePointer<CVTimeStamp>,
-        flagsIn: CVOptionFlags,
-        flagsOut: UnsafeMutablePointer<CVOptionFlags>,
-        displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn
-        in
-        weak var source = unsafeBitCast(displayLinkContext, dispatch_source_t.self)
-        dispatch_source_merge_data(source!, 1)
-        return kCVReturnSuccess
-    }
+//    // This is the renderer output callback function
+//    private let dispatchGameLoop: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink,
+//        now: UnsafePointer<CVTimeStamp>,
+//        outputTime: UnsafePointer<CVTimeStamp>,
+//        flagsIn: CVOptionFlags,
+//        flagsOut: UnsafeMutablePointer<CVOptionFlags>,
+//        displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn
+//        in
+//        weak var source = unsafeBitCast(displayLinkContext, dispatch_source_t.self)
+//        dispatch_source_merge_data(source!, 1)
+//        return kCVReturnSuccess
+//    }
     #endif
     
     private func initCommon() {
@@ -115,12 +129,12 @@ class AAPLViewController: BaseViewController {
             let notificationCenter = NSNotificationCenter.defaultCenter()
             //  Register notifications to start/stop drawing as this app moves into the background
             notificationCenter.addObserver(self,
-                selector: "didEnterBackground:",
+                selector: #selector(AAPLViewController.didEnterBackground(_:)),
                 name: UIApplicationDidEnterBackgroundNotification,
                 object: nil)
             
             notificationCenter.addObserver(self,
-                selector: "willEnterForeground:",
+                selector: #selector(AAPLViewController.willEnterForeground(_:)),
                 name: UIApplicationWillEnterForegroundNotification,
                 object: nil)
             
@@ -198,7 +212,7 @@ class AAPLViewController: BaseViewController {
             let notificationCenter = NSNotificationCenter.defaultCenter()
             // Register to be notified when the window closes so we can stop the displaylink
             notificationCenter.addObserver(self,
-                selector: "_windowWillClose:",
+                                           selector: #selector(AAPLViewController._windowWillClose(_:)),
                 name: NSWindowWillCloseNotification,
                 object: self.view.window)
             
