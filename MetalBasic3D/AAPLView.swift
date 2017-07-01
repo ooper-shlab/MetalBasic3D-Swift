@@ -34,10 +34,10 @@ import Metal
 protocol AAPLViewDelegate: NSObjectProtocol {
     
     // called if the view changes orientation or size, renderer can precompute its view and projection matricies here for example
-    func reshape(view: AAPLView)
+    func reshape(_ view: AAPLView)
     
     // delegate should perform all rendering here
-    func render(view: AAPLView)
+    func render(_ view: AAPLView)
     
 }
 
@@ -53,8 +53,8 @@ class AAPLView: BaseView {
     private var _renderPassDescriptor: MTLRenderPassDescriptor?
     
     // set these pixel formats to have the main drawable framebuffer get created with depth and/or stencil attachments
-    var depthPixelFormat: MTLPixelFormat = .Invalid
-    var stencilPixelFormat: MTLPixelFormat = .Invalid
+    var depthPixelFormat: MTLPixelFormat = .invalid
+    var stencilPixelFormat: MTLPixelFormat = .invalid
     var sampleCount: Int = 0
     
     private weak var _metalLayer: CAMetalLayer!
@@ -66,14 +66,14 @@ class AAPLView: BaseView {
     private var _msaaTex: MTLTexture?
     
     #if os(iOS)
-    override class func layerClass() -> AnyClass {
+    override class var layerClass: AnyClass {
         return CAMetalLayer.self
     }
     #endif
     
     private func initCommon() {
         #if os(iOS)
-            self.opaque = true
+            self.isOpaque = true
             self.backgroundColor = nil
             _metalLayer = self.layer as! CAMetalLayer
         #else
@@ -85,7 +85,7 @@ class AAPLView: BaseView {
         device = MTLCreateSystemDefaultDevice()!
         
         _metalLayer.device          = device
-        _metalLayer.pixelFormat     = .BGRA8Unorm
+        _metalLayer.pixelFormat     = .bgra8Unorm
         
         // this is the default but if we wanted to perform compute on the final rendering layer we could set this to no
         _metalLayer.framebufferOnly = true
@@ -117,7 +117,7 @@ class AAPLView: BaseView {
         _msaaTex    = nil
     }
     
-    private func setupRenderPassDescriptorForTexture(texture: MTLTexture) {
+    private func setupRenderPassDescriptorForTexture(_ texture: MTLTexture) {
         // create lazily
         if _renderPassDescriptor == nil {
             _renderPassDescriptor = MTLRenderPassDescriptor()
@@ -125,11 +125,11 @@ class AAPLView: BaseView {
         
         // create a color attachment every frame since we have to recreate the texture every frame
         let colorAttachment = _renderPassDescriptor!.colorAttachments[0]
-        colorAttachment.texture = texture
+        colorAttachment?.texture = texture
         
         // make sure to clear every frame for best performance
-        colorAttachment.loadAction = .Clear
-        colorAttachment.clearColor = MTLClearColorMake(0.65, 0.65, 0.65, 1.0)
+        colorAttachment?.loadAction = .clear
+        colorAttachment?.clearColor = MTLClearColorMake(0.65, 0.65, 0.65, 1.0)
         
         // if sample count is greater than 1, render into using MSAA, then resolve into our color texture
         if sampleCount > 1 {
@@ -138,34 +138,34 @@ class AAPLView: BaseView {
                 ||  ( _msaaTex?.sampleCount != sampleCount   )
             
             if _msaaTex == nil || (_msaaTex != nil && doUpdate) {
-                let desc = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.BGRA8Unorm,
+                let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
                     width: texture.width,
                     height: texture.height,
                     mipmapped: false)
-                desc.textureType = .Type2DMultisample
+                desc.textureType = .type2DMultisample
                 
                 // sample count was specified to the view by the renderer.
                 // this must match the sample count given to any pipeline state using this render pass descriptor
                 desc.sampleCount = sampleCount
                 
-                _msaaTex = device?.newTextureWithDescriptor(desc)
+                _msaaTex = device?.makeTexture(descriptor: desc)
             }
             
             // When multisampling, perform rendering to _msaaTex, then resolve
             // to 'texture' at the end of the scene
-            colorAttachment.texture = _msaaTex
-            colorAttachment.resolveTexture = texture
+            colorAttachment?.texture = _msaaTex
+            colorAttachment?.resolveTexture = texture
             
             // set store action to resolve in this case
-            colorAttachment.storeAction = MTLStoreAction.MultisampleResolve
+            colorAttachment?.storeAction = MTLStoreAction.multisampleResolve
         } else {
             // store only attachments that will be presented to the screen, as in this case
-            colorAttachment.storeAction = MTLStoreAction.Store
+            colorAttachment?.storeAction = MTLStoreAction.store
         }
         
         // Now create the depth and stencil attachments
         
-        if depthPixelFormat != .Invalid {
+        if depthPixelFormat != .invalid {
             let doUpdate =     ( _depthTex?.width       != texture.width  )
                 ||  ( _depthTex?.height      != texture.height )
                 ||  ( _depthTex?.sampleCount != sampleCount   )
@@ -173,28 +173,28 @@ class AAPLView: BaseView {
             if _depthTex == nil || doUpdate {
                 //  If we need a depth texture and don't have one, or if the depth texture we have is the wrong size
                 //  Then allocate one of the proper size
-                let desc = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(depthPixelFormat,
+                let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: depthPixelFormat,
                     width: texture.width,
                     height: texture.height,
                     mipmapped: false)
                 
-                desc.textureType = (sampleCount > 1) ? .Type2DMultisample : .Type2D
+                desc.textureType = (sampleCount > 1) ? .type2DMultisample : .type2D
                 desc.sampleCount = sampleCount
-                desc.usage = .Unknown
-                desc.storageMode = .Private
+                desc.usage = MTLTextureUsage()
+                desc.storageMode = .private
                 
-                _depthTex = device?.newTextureWithDescriptor(desc)
+                _depthTex = device?.makeTexture(descriptor: desc)
                 
                 if let depthAttachment = _renderPassDescriptor?.depthAttachment {
                     depthAttachment.texture = _depthTex
-                    depthAttachment.loadAction = .Clear
-                    depthAttachment.storeAction = .DontCare
+                    depthAttachment.loadAction = .clear
+                    depthAttachment.storeAction = .dontCare
                     depthAttachment.clearDepth = 1.0
                 }
             }
         }
         
-        if stencilPixelFormat != .Invalid {
+        if stencilPixelFormat != .invalid {
             let doUpdate  =    ( _stencilTex?.width       != texture.width  )
                 ||  ( _stencilTex?.height      != texture.height )
                 ||  ( _stencilTex?.sampleCount != sampleCount   )
@@ -202,20 +202,20 @@ class AAPLView: BaseView {
             if _stencilTex == nil || doUpdate {
                 //  If we need a stencil texture and don't have one, or if the depth texture we have is the wrong size
                 //  Then allocate one of the proper size
-                let desc = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(stencilPixelFormat,
+                let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: stencilPixelFormat,
                     width: texture.width,
                     height: texture.height,
                     mipmapped: false)
                 
-                desc.textureType = (sampleCount > 1) ? .Type2DMultisample : .Type2D
+                desc.textureType = (sampleCount > 1) ? .type2DMultisample : .type2D
                 desc.sampleCount = sampleCount
                 
-                _stencilTex = device?.newTextureWithDescriptor(desc)
+                _stencilTex = device?.makeTexture(descriptor: desc)
                 
                 if let stencilAttachment = _renderPassDescriptor?.stencilAttachment {
                     stencilAttachment.texture = _stencilTex
-                    stencilAttachment.loadAction = .Clear
-                    stencilAttachment.storeAction = .DontCare
+                    stencilAttachment.loadAction = .clear
+                    stencilAttachment.storeAction = .dontCare
                     stencilAttachment.clearStencil = 0
                 }
             }
@@ -267,11 +267,11 @@ class AAPLView: BaseView {
                 
                 // scale drawableSize so that drawable is 1:1 width pixels not 1:1 to points
                 #if os(iOS)
-                    let screen = self.window?.screen ?? UIScreen.mainScreen()
+                    let screen = self.window?.screen ?? UIScreen.main
                     drawableSize.width *= screen.nativeScale
                     drawableSize.height *= screen.nativeScale
                 #else
-                    let screen = self.window?.screen ?? NSScreen.mainScreen()
+                    let screen = self.window?.screen ?? NSScreen.main()
                     drawableSize.width *= screen?.backingScaleFactor ?? 1.0
                     drawableSize.height *= screen?.backingScaleFactor ?? 1.0
                 #endif
@@ -309,12 +309,12 @@ class AAPLView: BaseView {
         _layerSizeDidUpdate = true
     }
     #else
-    override func setFrameSize(newSize: NSSize) {
+    override func setFrameSize(_ newSize: NSSize) {
         super.setFrameSize(newSize)
         _layerSizeDidUpdate = true
     }
     
-    override func setBoundsSize(newSize: NSSize) {
+    override func setBoundsSize(_ newSize: NSSize) {
         super.setBoundsSize(newSize)
         _layerSizeDidUpdate = true
     }

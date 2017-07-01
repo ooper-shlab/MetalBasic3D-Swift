@@ -92,7 +92,7 @@ private let kCubeVertexData: [Float] = [
 @objc(AAPLRenderer)
 class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
     // constant synchronization for buffering <kInFlightCommandBuffers> frames
-    private var _inflight_semaphore = dispatch_semaphore_create(kInFlightCommandBuffers)
+    private var _inflight_semaphore = DispatchSemaphore(value: kInFlightCommandBuffers)
     private var _dynamicConstantBuffer: [MTLBuffer] = []
     
     // renderer global ivars
@@ -109,7 +109,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
     private var _rotation: Float = 0.0
     
     private var _maxBufferBytesPerFrame: Int = 0
-    private var _sizeOfConstantT: Int =  strideof(AAPL.constants_t.self)
+    private var _sizeOfConstantT: Int =  MemoryLayout<AAPL.constants_t>.stride
     
     // this value will cycle from 0 to g_max_inflight_buffers whenever a display completes ensuring renderer clients
     // can synchronize between g_max_inflight_buffers count buffers, and thus avoiding a constant buffer from being overwritten between draws
@@ -123,7 +123,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
     //MARK: Configure
     
     // load all assets before triggering rendering
-    func configure(view: AAPLView) {
+    func configure(_ view: AAPLView) {
         // find a usable Device
         _device = view.device
         guard let _device = _device else {
@@ -131,12 +131,12 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         }
         
         // setup view with drawable formats
-        view.depthPixelFormat   = .Depth32Float
-        view.stencilPixelFormat = .Invalid
+        view.depthPixelFormat   = .depth32Float
+        view.stencilPixelFormat = .invalid
         view.sampleCount        = 1
         
         // create a new command queue
-        _commandQueue = _device.newCommandQueue()
+        _commandQueue = _device.makeCommandQueue()
         
         _defaultLibrary = _device.newDefaultLibrary()
         guard _defaultLibrary != nil else {
@@ -153,21 +153,21 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         }
         
         let depthStateDesc = MTLDepthStencilDescriptor()
-        depthStateDesc.depthCompareFunction = .Less
-        depthStateDesc.depthWriteEnabled = true
-        _depthState = _device.newDepthStencilStateWithDescriptor(depthStateDesc)
+        depthStateDesc.depthCompareFunction = .less
+        depthStateDesc.isDepthWriteEnabled = true
+        _depthState = _device.makeDepthStencilState(descriptor: depthStateDesc)
         
         // allocate a number of buffers in memory that matches the sempahore count so that
         // we always have one self contained memory buffer for each buffered frame.
         // In this case triple buffering is the optimal way to go so we cycle through 3 memory buffers
         _dynamicConstantBuffer = []
         for i in 0..<kInFlightCommandBuffers {
-            _dynamicConstantBuffer.append(_device.newBufferWithLength(_maxBufferBytesPerFrame, options: []))
+            _dynamicConstantBuffer.append(_device.makeBuffer(length: _maxBufferBytesPerFrame, options: []))
             _dynamicConstantBuffer[i].label = "ConstantBuffer\(i)"
             
             // write initial color values for both cubes (at each offset).
             // Note, these will get animated during update
-            let constant_buffer = UnsafeMutablePointer<AAPL.constants_t>(_dynamicConstantBuffer[i].contents())
+            let constant_buffer = _dynamicConstantBuffer[i].contents().assumingMemoryBound(to: AAPL.constants_t.self)
             for j in 0..<kNumberOfBoxes {
                 if j%2 == 0 {
                     constant_buffer[j].multiplier = 1
@@ -182,21 +182,21 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         }
     }
     
-    private func preparePipelineState(view: AAPLView) -> Bool {
+    private func preparePipelineState(_ view: AAPLView) -> Bool {
         // get the fragment function from the library
-        let fragmentProgram = _defaultLibrary?.newFunctionWithName("lighting_fragment")
+        let fragmentProgram = _defaultLibrary?.makeFunction(name: "lighting_fragment")
         if fragmentProgram == nil {
             NSLog(">> ERROR: Couldn't load fragment function from default library")
         }
         
         // get the vertex function from the library
-        let vertexProgram = _defaultLibrary?.newFunctionWithName("lighting_vertex")
+        let vertexProgram = _defaultLibrary?.makeFunction(name: "lighting_vertex")
         if vertexProgram == nil {
             NSLog(">> ERROR: Couldn't load vertex function from default library")
         }
         
         // setup the vertex buffers
-        _vertexBuffer = _device?.newBufferWithBytes(kCubeVertexData, length: kCubeVertexData.count * sizeof(Float), options: .OptionCPUCacheModeDefault)
+        _vertexBuffer = _device?.makeBuffer(bytes: kCubeVertexData, length: kCubeVertexData.count * MemoryLayout<Float>.size, options: MTLResourceOptions())
         _vertexBuffer?.label = "Vertices"
         
         // create a pipeline state descriptor which can be used to create a compiled pipeline state object
@@ -206,13 +206,13 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         pipelineStateDescriptor.sampleCount                     = view.sampleCount
         pipelineStateDescriptor.vertexFunction                  = vertexProgram
         pipelineStateDescriptor.fragmentFunction                = fragmentProgram
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = .BGRA8Unorm
+        pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineStateDescriptor.depthAttachmentPixelFormat      = view.depthPixelFormat
         
         // create a compiled pipeline state object. Shader functions (from the render pipeline descriptor)
         // are compiled when this is created unlessed they are obtained from the device's cache
         do {
-            _pipelineState = try _device?.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
+            _pipelineState = try _device?.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
         } catch let error as NSError {
             NSLog(">> ERROR: Failed Aquiring pipeline state: \(error)")
             return false
@@ -223,39 +223,39 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
     
     //MARK: Render
     
-    func render(view: AAPLView) {
+    func render(_ view: AAPLView) {
         // Allow the renderer to preflight 3 frames on the CPU (using a semapore as a guard) and commit them to the GPU.
         // This semaphore will get signaled once the GPU completes a frame's work via addCompletedHandler callback below,
         // signifying the CPU can go ahead and prepare another frame.
-        dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER)
+        _ = _inflight_semaphore.wait(timeout: DispatchTime.distantFuture)
         
         // Prior to sending any data to the GPU, constant buffers should be updated accordingly on the CPU.
         self.updateConstantBuffer()
         
         // create a new command buffer for each renderpass to the current drawable
-        let commandBuffer = _commandQueue?.commandBuffer()
+        let commandBuffer = _commandQueue?.makeCommandBuffer()
         
         // create a render command encoder so we can render into something
         if let renderPassDescriptor = view.renderPassDescriptor {
-            let renderEncoder = commandBuffer?.renderCommandEncoderWithDescriptor(renderPassDescriptor)
+            let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
             renderEncoder?.pushDebugGroup("Boxes")
             renderEncoder?.setDepthStencilState(_depthState)
             renderEncoder?.setRenderPipelineState(_pipelineState!)
-            renderEncoder?.setVertexBuffer(_vertexBuffer, offset: 0, atIndex: 0)
+            renderEncoder?.setVertexBuffer(_vertexBuffer, offset: 0, at: 0)
             
             for i in 0..<kNumberOfBoxes {
                 //  set constant buffer for each box
-                renderEncoder?.setVertexBuffer(_dynamicConstantBuffer[_constantDataBufferIndex], offset: i*_sizeOfConstantT, atIndex: 1)
+                renderEncoder?.setVertexBuffer(_dynamicConstantBuffer[_constantDataBufferIndex], offset: i*_sizeOfConstantT, at: 1)
                 
                 // tell the render context we want to draw our primitives
-                renderEncoder?.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: 36)
+                renderEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 36)
             }
             
             renderEncoder?.endEncoding()
             renderEncoder?.popDebugGroup()
             
             // schedule a present once rendering to the framebuffer is complete
-            commandBuffer?.presentDrawable(view.currentDrawable!)
+            commandBuffer?.present(view.currentDrawable!)
         }
         
         // call the view's completion handler which is required by the view since it will signal its semaphore and set up the next buffer
@@ -264,7 +264,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
             
             // GPU has completed rendering the frame and is done using the contents of any buffers previously encoded on the CPU for that frame.
             // Signal the semaphore and allow the CPU to proceed and construct the next frame.
-            dispatch_semaphore_signal(block_sema)
+            block_sema.signal()
         }
         
         // finalize rendering here. this will push the command buffer to the GPU
@@ -277,7 +277,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         _constantDataBufferIndex = (_constantDataBufferIndex + 1) % kInFlightCommandBuffers
     }
     
-    func reshape(view: AAPLView) {
+    func reshape(_ view: AAPLView) {
         // when reshape is called, update the view and projection matricies since this means the view orientation or size changed
         let aspect = Float(abs(view.bounds.size.width / view.bounds.size.height))
         _projectionMatrix = AAPL.perspective_fov(kFOVY, aspect, 0.1, 100.0)
@@ -291,7 +291,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         var baseModelViewMatrix = AAPL.translate(0.0, 0.0, 5.0) * AAPL.rotate(_rotation, 1.0, 1.0, 1.0)
         baseModelViewMatrix = _viewMatrix * baseModelViewMatrix
         
-        let constant_buffer = UnsafeMutablePointer<AAPL.constants_t>(_dynamicConstantBuffer[_constantDataBufferIndex].contents())
+        let constant_buffer = _dynamicConstantBuffer[_constantDataBufferIndex].contents().assumingMemoryBound(to: AAPL.constants_t.self)
         for i in 0..<kNumberOfBoxes {
             // calculate the Model view projection matrix of each box
             // for each box, if its odd, create a negative multiplier to offset boxes in space
@@ -317,11 +317,11 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
     }
     
     // just use this to update app globals
-    func update(controller: AAPLViewController) {
+    func update(_ controller: AAPLViewController) {
         _rotation += Float(controller.timeSinceLastDraw * 50.0)
     }
     
-    func viewController(viewController: AAPLViewController, willPause pause: Bool) {
+    func viewController(_ viewController: AAPLViewController, willPause pause: Bool) {
         // timer is suspended/resumed
         // Can do any non-rendering related background work here when suspended
     }

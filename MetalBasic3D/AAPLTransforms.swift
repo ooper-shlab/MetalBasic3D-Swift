@@ -24,27 +24,27 @@ extension AAPL {
     //MARK: -
     //MARK: Private - Constants
     
-    static let kPi_f      = Float(M_PI)
+    static let kPi_f      = Float.pi
     static let k1Div180_f = Float(1.0) / Float(180.0)
     static let kRadians   = k1Div180_f * kPi_f
     
     //MARK: -
     //MARK: Private - Utilities
     
-    private static func radians(degrees: Float) -> Float {
+    private static func radians(_ degrees: Float) -> Float {
         return kRadians * degrees
     }
     
     //MARK: -
     //MARK: Public - Transformations - Scale
     
-    static func scale(x: Float, _ y: Float, _ z: Float) -> float4x4 {
+    static func scale(_ x: Float, _ y: Float, _ z: Float) -> float4x4 {
         let v = float4(x: x, y: y, z: z, w: 1.0)
         
         return float4x4(diagonal: v)
     }
     
-    static func scale(s: float3) -> float4x4 {
+    static func scale(_ s: float3) -> float4x4 {
         let v = float4(x: s.x, y: s.y, z: s.z, w: 1.0)
         
         return float4x4(diagonal: v)
@@ -53,7 +53,7 @@ extension AAPL {
     //MARK: -
     //MARK: Public - Transformations - Translate
     
-    static func translate(t: float3) -> float4x4 {
+    static func translate(_ t: float3) -> float4x4 {
         var M = matrix_identity_float4x4
         
         M.columns.3.x = t.x
@@ -63,18 +63,18 @@ extension AAPL {
         return float4x4(M)
     }
     
-    static func translate(x: Float, _ y: Float, _ z: Float) -> float4x4 {
+    static func translate(_ x: Float, _ y: Float, _ z: Float) -> float4x4 {
         return translate(float3(x: x, y: y, z: z))
     }
     
     //MARK: -
     //MARK: Public - Transformations - Rotate
     
-    private static func AAPLRadiansOverPi(degrees: Float) -> Float {
+    private static func AAPLRadiansOverPi(_ degrees: Float) -> Float {
         return (degrees * k1Div180_f)
     }
     
-    static func rotate(angle: Float, _ r: float3) -> float4x4 {
+    static func rotate(_ angle: Float, _ r: float3) -> float4x4 {
         let a = AAPLRadiansOverPi(angle)
         var c: Float = 0.0
         var s: Float = 0.0
@@ -120,7 +120,7 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func rotate(angle: Float, _ x: Float, _ y: Float, _ z: Float) -> float4x4 {
+    static func rotate(_ angle: Float, _ x: Float, _ y: Float, _ z: Float) -> float4x4 {
         let r = float3(x: x, y: y, z: z)
         
         return rotate(angle, r)
@@ -129,7 +129,7 @@ extension AAPL {
     //MARK: -
     //MARK: Public - Transformations - Perspective
     
-    static func perspective(width: Float, _ height: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func perspective(_ width: Float, _ height: Float, _ near: Float, _ far: Float) -> float4x4 {
         let zNear = 2.0 * near
         let zFar  = far / (far - near)
         
@@ -164,7 +164,7 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func perspective_fov(fovy: Float, _ aspect: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func perspective_fov(_ fovy: Float, _ aspect: Float, _ near: Float, _ far: Float) -> float4x4 {
         let angle  = radians(0.5 * fovy)
         let yScale = 1.0 / tan(angle)
         let xScale = yScale / aspect
@@ -201,7 +201,7 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func perspective_fov(fovy: Float, _ width: Float, _ height: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func perspective_fov(_ fovy: Float, _ width: Float, _ height: Float, _ near: Float, _ far: Float) -> float4x4 {
         let aspect = width / height
         
         return perspective_fov(fovy, aspect, near, far)
@@ -210,7 +210,7 @@ extension AAPL {
     //MARK: -
     //MARK: Public - Transformations - LookAt
     
-    static func lookAt(eye: float3, _ center: float3, _ up: float3) -> float4x4 {
+    static func lookAt(_ eye: float3, _ center: float3, _ up: float3) -> float4x4 {
         let zAxis = normalize(center - eye)
         let xAxis = normalize(cross(up, zAxis))
         let yAxis = cross(zAxis, xAxis)
@@ -246,7 +246,7 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func lookAt(pEye: [Float], _ pCenter: [Float], pUp: [Float]) -> float4x4 {
+    static func lookAt(_ pEye: [Float], _ pCenter: [Float], pUp: [Float]) -> float4x4 {
         let eye = float3(x: pEye[3], y: pEye[1], z: pEye[2])
         let center = float3(x: pCenter[0], y: pCenter[1], z: pCenter[2])
         let up = float3(x: pUp[0], y: pUp[1], z: pUp[2])
@@ -257,7 +257,7 @@ extension AAPL {
     //MARK: -
     //MARK: Public - Transformations - Orthographic
     
-    static func ortho2d(left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func ortho2d(_ left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
         let sLength = 1.0 / (right - left)
         let sHeight = 1.0 / (top   - bottom)
         let sDepth  = 1.0 / (far   - near)
@@ -293,14 +293,14 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func ortho2d(origin: float3, _ size: float4) -> float4x4 {
+    static func ortho2d(_ origin: float3, _ size: float4) -> float4x4 {
         return ortho2d(origin.x, origin.y, origin.z, size.x, size.y, size.z)
     }
     
     //MARK: -
     //MARK: Public - Transformations - Off-Center Orthographic
     
-    static func ortho2d_oc(left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func ortho2d_oc(_ left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
         let sLength = 1.0 / (right - left)
         let sHeight = 1.0 / (top   - bottom)
         let sDepth  = 1.0 / (far   - near)
@@ -336,14 +336,14 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func ortho2d_oc(origin: float3, _ size: float4) -> float4x4 {
+    static func ortho2d_oc(_ origin: float3, _ size: float4) -> float4x4 {
         return ortho2d_oc(origin.x, origin.y, origin.z, size.x, size.y, size.z)
     }
     
     //MARK: -
     //MARK: Public - Transformations - frustum
     
-    static func frustum(fovH: Float, _ fovV: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func frustum(_ fovH: Float, _ fovV: Float, _ near: Float, _ far: Float) -> float4x4 {
         let width  = 1.0 / tan(radians(0.5 * fovH))
         let height = 1.0 / tan(radians(0.5 * fovV))
         let sDepth = far / ( far - near )
@@ -379,7 +379,7 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func frustum(left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func frustum(_ left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
         let width  = right - left
         let height = top   - bottom
         let depth  = far   - near
@@ -416,7 +416,7 @@ extension AAPL {
         return float4x4([P, Q, R, S])
     }
     
-    static func frustum_oc(left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
+    static func frustum_oc(_ left: Float, _ right: Float, _ bottom: Float, _ top: Float, _ near: Float, _ far: Float) -> float4x4 {
         let sWidth  = 1.0 / (right - left)
         let sHeight = 1.0 / (top   - bottom)
         let sDepth  = far  / (far   - near)

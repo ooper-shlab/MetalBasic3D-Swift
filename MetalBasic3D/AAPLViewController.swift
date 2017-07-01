@@ -20,31 +20,16 @@
     import AppKit
     typealias BaseViewController = NSViewController
 #endif
-import QuartzCore
-#if os(OSX)
-    // This is the renderer output callback function
-    private func dispatchGameLoop(displayLink: CVDisplayLink,
-        now: UnsafePointer<CVTimeStamp>,
-        outputTime: UnsafePointer<CVTimeStamp>,
-        flagsIn: CVOptionFlags,
-        flagsOut: UnsafeMutablePointer<CVOptionFlags>,
-        displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn
-    {
-        let source = unsafeBitCast(displayLinkContext, dispatch_source_t.self)
-        dispatch_source_merge_data(source, 1)
-        return kCVReturnSuccess
-    }
-#endif
 
 // required view controller delegate functions.
 @objc(AAPLViewControllerDelegate)
 protocol AAPLViewControllerDelegate: NSObjectProtocol {
     
     // Note this method is called from the thread the main game loop is run
-    func update(controller: AAPLViewController)
+    func update(_ controller: AAPLViewController)
     
     // called whenever the main game loop is paused, such as when the app is backgrounded
-    func viewController(viewController: AAPLViewController, willPause pause: Bool)
+    func viewController(_ viewController: AAPLViewController, willPause pause: Bool)
 }
 
 @objc(AAPLViewController)
@@ -53,7 +38,7 @@ class AAPLViewController: BaseViewController {
     weak var delegate: AAPLViewControllerDelegate?
     
     // the time interval from the last draw
-    private(set) var timeSinceLastDraw: NSTimeInterval = 0.0
+    private(set) var timeSinceLastDraw: TimeInterval = 0.0
     
     // What vsync refresh interval to fire at. (Sets CADisplayLink frameinterval property)
     // set to 1 by default, which is the CADisplayLink default setting (60 FPS).
@@ -66,7 +51,7 @@ class AAPLViewController: BaseViewController {
     private var _displayLink: CADisplayLink?
     #else
     var _displayLink: CVDisplayLink?
-    var _displaySource: dispatch_source_t?
+    var _displaySource: DispatchSourceUserDataAdd?
     #endif
     
     // boolean to determine if the first draw has occured
@@ -82,12 +67,12 @@ class AAPLViewController: BaseViewController {
     
     deinit {
         #if os(iOS)
-            NSNotificationCenter.defaultCenter().removeObserver(self,
-                name: UIApplicationDidEnterBackgroundNotification,
+            NotificationCenter.default.removeObserver(self,
+                name: .UIApplicationDidEnterBackground,
                 object: nil)
             
-            NSNotificationCenter.defaultCenter().removeObserver(self,
-                name: UIApplicationWillEnterForegroundNotification,
+            NotificationCenter.default.removeObserver(self,
+                name: .UIApplicationWillEnterForeground,
                 object: nil)
             
         #endif
@@ -99,26 +84,22 @@ class AAPLViewController: BaseViewController {
     #if os(iOS)
     private func dispatchGameLoop() {
         // create a game loop timer using a display link
-        _displayLink = UIScreen.mainScreen().displayLinkWithTarget(self,
+        _displayLink = UIScreen.main.displayLink(withTarget: self,
             selector: #selector(AAPLViewController.gameloop))
         _displayLink?.frameInterval = interval
-        _displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(),
-            forMode: NSDefaultRunLoopMode)
+        _displayLink?.add(to: RunLoop.main,
+            forMode: RunLoopMode.defaultRunLoopMode)
     }
     
     #else
-//    // This is the renderer output callback function
-//    private let dispatchGameLoop: CVDisplayLinkOutputCallback = {(displayLink: CVDisplayLink,
-//        now: UnsafePointer<CVTimeStamp>,
-//        outputTime: UnsafePointer<CVTimeStamp>,
-//        flagsIn: CVOptionFlags,
-//        flagsOut: UnsafeMutablePointer<CVOptionFlags>,
-//        displayLinkContext: UnsafeMutablePointer<Void>) -> CVReturn
-//        in
-//        weak var source = unsafeBitCast(displayLinkContext, dispatch_source_t.self)
-//        dispatch_source_merge_data(source!, 1)
-//        return kCVReturnSuccess
-//    }
+    // This is the renderer output callback function
+    private let dispatchGameLoop: CVDisplayLinkOutputCallback = {
+        displayLink, now, outputTime, flagsIn, flagsOut, displayLinkContext in
+        
+        let source = Unmanaged<DispatchSourceUserDataAdd>.fromOpaque(displayLinkContext!).takeUnretainedValue()
+        source.add(data: 1)
+        return kCVReturnSuccess
+    }
     #endif
     
     private func initCommon() {
@@ -126,31 +107,31 @@ class AAPLViewController: BaseViewController {
         self.delegate = _renderer
         
         #if os(iOS)
-            let notificationCenter = NSNotificationCenter.defaultCenter()
+            let notificationCenter = NotificationCenter.default
             //  Register notifications to start/stop drawing as this app moves into the background
             notificationCenter.addObserver(self,
                 selector: #selector(AAPLViewController.didEnterBackground(_:)),
-                name: UIApplicationDidEnterBackgroundNotification,
+                name: .UIApplicationDidEnterBackground,
                 object: nil)
             
             notificationCenter.addObserver(self,
                 selector: #selector(AAPLViewController.willEnterForeground(_:)),
-                name: UIApplicationWillEnterForegroundNotification,
+                name: .UIApplicationWillEnterForeground,
                 object: nil)
             
         #else
-            _displaySource = dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue())
-            dispatch_source_set_event_handler(_displaySource!) {[weak self] in
+            _displaySource = DispatchSource.makeUserDataAddSource(queue: DispatchQueue.main)
+            _displaySource!.setEventHandler {[weak self] in
                 self?.gameloop()
             }
-            dispatch_resume(_displaySource!)
+            _displaySource!.resume()
             
             // Create a display link capable of being used with all active displays
             var cvReturn = CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink)
             
             assert(cvReturn == kCVReturnSuccess)
             
-            cvReturn = CVDisplayLinkSetOutputCallback(_displayLink!, dispatchGameLoop, UnsafeMutablePointer(unsafeAddressOf(_displaySource!)))
+            cvReturn = CVDisplayLinkSetOutputCallback(_displayLink!, dispatchGameLoop, Unmanaged.passUnretained(_displaySource!).toOpaque())
             
             assert(cvReturn == kCVReturnSuccess)
             
@@ -163,28 +144,28 @@ class AAPLViewController: BaseViewController {
     }
     
     #if os(OSX)
-    @objc func _windowWillClose(notification: NSNotification) {
+    @objc func _windowWillClose(_ notification: Notification) {
         // Stop the display link when the window is closing because we will
         // not be able to get a drawable, but the display link may continue
         // to fire
         
-        if notification.object === self.view.window {
+        if notification.object as AnyObject? === self.view.window {
             CVDisplayLinkStop(_displayLink!)
-            dispatch_source_cancel(_displaySource!)
+            _displaySource!.cancel()
         }
     }
     #endif
     
     // Called when loaded from nib
     #if os(iOS)
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         self.initCommon()
         
     }
     #else
-    override init?(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init?(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.initCommon()
     }
@@ -209,11 +190,11 @@ class AAPLViewController: BaseViewController {
         
         #if os(OSX)
             
-            let notificationCenter = NSNotificationCenter.defaultCenter()
+            let notificationCenter = NotificationCenter.default
             // Register to be notified when the window closes so we can stop the displaylink
             notificationCenter.addObserver(self,
                                            selector: #selector(AAPLViewController._windowWillClose(_:)),
-                name: NSWindowWillCloseNotification,
+                name: .NSWindowWillClose,
                 object: self.view.window)
             
             
@@ -261,7 +242,7 @@ class AAPLViewController: BaseViewController {
                 // otherwise the display link thread may call into the view and crash
                 // when it encounters something that has been release
                 CVDisplayLinkStop(_displayLink!)
-                dispatch_source_cancel(_displaySource!)
+                _displaySource!.cancel()
                 
                 _displayLink = nil
                 _displaySource = nil
@@ -282,7 +263,7 @@ class AAPLViewController: BaseViewController {
                 
                 #if os(iOS)
                     _gameLoopPaused = pause
-                    _displayLink!.paused = pause
+                    _displayLink!.isPaused = pause
                     if pause {
                         
                         // ask the view to release textures until its resumed
@@ -305,23 +286,23 @@ class AAPLViewController: BaseViewController {
         }
     }
     
-    @objc func didEnterBackground(notification: NSNotification) {
+    @objc func didEnterBackground(_ notification: Notification) {
         self.paused = true
     }
     
-    @objc func willEnterForeground(notification: NSNotification) {
+    @objc func willEnterForeground(_ notification: Notification) {
         self.paused = false
     }
     
     #if os(iOS)
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // run the game loop
         self.dispatchGameLoop()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         // end the gameloop

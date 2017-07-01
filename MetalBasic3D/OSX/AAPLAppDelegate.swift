@@ -21,11 +21,11 @@ class AAPLAppDelegate: NSObject, NSApplicationDelegate {
     
     
     
-    func applicationDidFinishLaunching(notification: NSNotification) {
+    func applicationDidFinishLaunching(_ notification: Notification) {
         // Insert code here to initialize your application
     }
     
-    func applicationWillTerminate(notification: NSNotification) {
+    func applicationWillTerminate(_ notification: Notification) {
         // Insert code here to tear down your application
     }
     
