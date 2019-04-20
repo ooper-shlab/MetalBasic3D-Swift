@@ -60,7 +60,7 @@ extension AAPL {
         M.columns.3.y = t.y
         M.columns.3.z = t.z
         
-        return float4x4(M)
+        return M
     }
     
     static func translate(_ x: Float, _ y: Float, _ z: Float) -> float4x4 {

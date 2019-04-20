@@ -138,7 +138,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         // create a new command queue
         _commandQueue = _device.makeCommandQueue()
         
-        _defaultLibrary = _device.newDefaultLibrary()
+        _defaultLibrary = _device.makeDefaultLibrary()
         guard _defaultLibrary != nil else {
             NSLog(">> ERROR: Couldnt create a default shader library")
             // assert here becuase if the shader libary isn't loading, nothing good will happen
@@ -162,7 +162,7 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
         // In this case triple buffering is the optimal way to go so we cycle through 3 memory buffers
         _dynamicConstantBuffer = []
         for i in 0..<kInFlightCommandBuffers {
-            _dynamicConstantBuffer.append(_device.makeBuffer(length: _maxBufferBytesPerFrame, options: []))
+            _dynamicConstantBuffer.append(_device.makeBuffer(length: _maxBufferBytesPerFrame, options: [])!)
             _dynamicConstantBuffer[i].label = "ConstantBuffer\(i)"
             
             // write initial color values for both cubes (at each offset).
@@ -241,11 +241,11 @@ class AAPLRenderer: NSObject, AAPLViewControllerDelegate, AAPLViewDelegate {
             renderEncoder?.pushDebugGroup("Boxes")
             renderEncoder?.setDepthStencilState(_depthState)
             renderEncoder?.setRenderPipelineState(_pipelineState!)
-            renderEncoder?.setVertexBuffer(_vertexBuffer, offset: 0, at: 0)
+            renderEncoder?.setVertexBuffer(_vertexBuffer, offset: 0, index: 0)
             
             for i in 0..<kNumberOfBoxes {
                 //  set constant buffer for each box
-                renderEncoder?.setVertexBuffer(_dynamicConstantBuffer[_constantDataBufferIndex], offset: i*_sizeOfConstantT, at: 1)
+                renderEncoder?.setVertexBuffer(_dynamicConstantBuffer[_constantDataBufferIndex], offset: i*_sizeOfConstantT, index: 1)
                 
                 // tell the render context we want to draw our primitives
                 renderEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 36)

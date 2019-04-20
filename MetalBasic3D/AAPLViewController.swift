@@ -68,11 +68,11 @@ class AAPLViewController: BaseViewController {
     deinit {
         #if os(iOS)
             NotificationCenter.default.removeObserver(self,
-                name: .UIApplicationDidEnterBackground,
+                name: UIApplication.didEnterBackgroundNotification,
                 object: nil)
             
             NotificationCenter.default.removeObserver(self,
-                name: .UIApplicationWillEnterForeground,
+                name: UIApplication.willEnterForegroundNotification,
                 object: nil)
             
         #endif
@@ -88,7 +88,7 @@ class AAPLViewController: BaseViewController {
             selector: #selector(AAPLViewController.gameloop))
         _displayLink?.frameInterval = interval
         _displayLink?.add(to: RunLoop.main,
-            forMode: RunLoopMode.defaultRunLoopMode)
+            forMode: RunLoop.Mode.default)
     }
     
     #else
@@ -111,12 +111,12 @@ class AAPLViewController: BaseViewController {
             //  Register notifications to start/stop drawing as this app moves into the background
             notificationCenter.addObserver(self,
                 selector: #selector(AAPLViewController.didEnterBackground(_:)),
-                name: .UIApplicationDidEnterBackground,
+                name: UIApplication.didEnterBackgroundNotification,
                 object: nil)
             
             notificationCenter.addObserver(self,
                 selector: #selector(AAPLViewController.willEnterForeground(_:)),
-                name: .UIApplicationWillEnterForeground,
+                name: UIApplication.willEnterForegroundNotification,
                 object: nil)
             
         #else
@@ -165,7 +165,7 @@ class AAPLViewController: BaseViewController {
         
     }
     #else
-    override init?(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.initCommon()
     }
@@ -194,7 +194,7 @@ class AAPLViewController: BaseViewController {
             // Register to be notified when the window closes so we can stop the displaylink
             notificationCenter.addObserver(self,
                                            selector: #selector(AAPLViewController._windowWillClose(_:)),
-                name: .NSWindowWillClose,
+                                           name: NSWindow.willCloseNotification,
                 object: self.view.window)
             
             

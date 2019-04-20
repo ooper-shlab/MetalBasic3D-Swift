@@ -75,10 +75,11 @@ class AAPLView: BaseView {
         #if os(iOS)
             self.isOpaque = true
             self.backgroundColor = nil
-            _metalLayer = self.layer as! CAMetalLayer
+            _metalLayer = (self.layer as! CAMetalLayer)
         #else
             self.wantsLayer = true
-            _metalLayer = CAMetalLayer()
+            let metalLayer = CAMetalLayer()
+            _metalLayer = metalLayer
             self.layer = _metalLayer
         #endif
         
@@ -271,7 +272,7 @@ class AAPLView: BaseView {
                     drawableSize.width *= screen.nativeScale
                     drawableSize.height *= screen.nativeScale
                 #else
-                    let screen = self.window?.screen ?? NSScreen.main()
+                    let screen = self.window?.screen ?? NSScreen.main
                     drawableSize.width *= screen?.backingScaleFactor ?? 1.0
                     drawableSize.height *= screen?.backingScaleFactor ?? 1.0
                 #endif
